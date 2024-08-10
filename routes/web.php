@@ -20,3 +20,8 @@ Route::get('/', function () {
     else
         return redirect('/dosen');
 });
+
+
+Route::get('/login', function () {
+    return redirect('/admin/login');
+})->name('login');

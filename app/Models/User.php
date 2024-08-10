@@ -52,16 +52,16 @@ class User extends Authenticatable
 
     public function scopeisAdmin()
     {
-        return auth()->user()->role == 'admin' || auth()->user()->role == 'developer';
+        return auth()->user()?->role == 'admin' || auth()->user()?->role == 'developer';
     }
 
     public function scopeisDev()
     {
-        return auth()->user()->role == 'developer';
+        return auth()->user()?->role == 'developer';
     }
 
     public function scopeisDosen()
     {
-        return auth()->user()->role == 'dosen';
+        return auth()->user()?->role == 'dosen';
     }
 }

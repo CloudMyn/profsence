@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Http\Responses\LoginResponse as ResponsesLoginResponse;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
+use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -12,7 +14,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
     }
 
     /**
@@ -22,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
     {
         LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
             $switch
-                ->locales(['en','id']); // also accepts a closure
+                ->locales(['en', 'id']); // also accepts a closure
         });
     }
 }

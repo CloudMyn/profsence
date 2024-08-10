@@ -16,6 +16,7 @@ class DosenScope
      */
     public function handle(Request $request, Closure $next): Response
     {
+
         if(User::isDosen()) {
             return $next($request);
         }

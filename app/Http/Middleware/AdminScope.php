@@ -16,8 +16,16 @@ class AdminScope
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(User::isAdmin()) {
+        if ($request->is('admin/login') && auth()->guest()) {
             return $next($request);
+        }
+
+        if (User::isAdmin()) {
+            return $next($request);
+        }
+
+        if (User::isDosen()) {
+            return redirect('/dosen');
         }
 
         abort(403);
