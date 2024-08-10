@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Select;
 use Filament\Support\Enums\VerticalAlignment;
 
 class AttendanceLocationResource extends Resource
@@ -80,6 +81,7 @@ class AttendanceLocationResource extends Resource
 
 
                 Fieldset::make('Aturan Absensi')
+                    ->columns(2)
                     ->schema([
 
                         TextInput::make('allowance')
@@ -100,13 +102,32 @@ class AttendanceLocationResource extends Resource
 
                         TimePicker::make('time_in')
                             ->label('Waktu Masuk')
+                            ->format('H:i:s')
                             ->timezone('Asia/Makassar')
                             ->required(),
 
 
                         TimePicker::make('time_out')
                             ->label('Waktu Keluar')
+                            ->format('H:i:s')
                             ->timezone('Asia/Makassar')
+                            ->required(),
+
+
+                        Select::make('color')
+                            ->label('Warna Penanda')
+                            ->columnSpanFull()
+                            ->options([
+                                'red' => 'Merah',
+                                'green' => 'Hijau',
+                                'yellow' => 'Kuning',
+                                'orange' => 'Oranye',
+                                'blue' => 'Biru',
+                                'black' => 'Hitam',
+                                'grey' => 'Abu-abu',
+                                'violet' => 'Ungu'
+                            ])
+                            ->suffixIcon('heroicon-m-globe-alt')
                             ->required(),
                     ]),
 
@@ -201,6 +222,7 @@ class AttendanceLocationResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

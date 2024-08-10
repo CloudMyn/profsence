@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
+            $table->foreignId('location_id');
 
             $table->date('date');
             $table->time('time');
@@ -32,6 +33,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('location_id')->references('id')->on('attendance_locations')->onDelete('cascade');
         });
     }
 

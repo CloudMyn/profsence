@@ -22,18 +22,19 @@
                 state.lng = lng;
 
                 // Initialize the map with the user's current location
-                const map = L.map(mapElement).setView([lat, lng], 13);
+                const map = L.map(mapElement).setView([lat, lng], 16);
 
                 // Set up the map's tile layer
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
+                    maxZoom: 28,
                 }).addTo(map);
 
                 // Add a draggable marker to the map
                 const marker = L.marker([lat, lng], {
                     draggable: @js($props['draggable'])
-                }).addTo(map);
+                }).addTo(map).bindPopup("Lokasi Anda!");
 
+                addMarkers(map, marker, state, wire);
 
                 // Update state when the marker is dragged
                 marker.on('dragend', function() {
@@ -42,9 +43,10 @@
                     state.lat = latLng.lat;
                     state.lng = latLng.lng;
 
+                    state.in_marker_radius = false;
+
                     wire.$refresh();
                 });
-
 
                 wire.$refresh();
 
@@ -78,11 +80,10 @@
             maxZoom: 19,
         }).addTo(map);
 
-
         // Add a draggable marker to the map
         const marker = L.marker([state.lat, state.lng], {
             draggable: @js($props['draggable'])
-        }).addTo(map);
+        }).addTo(map).bindPopup("Lokasi Anda!");
 
 
         // Update state when the marker is dragged
@@ -91,6 +92,8 @@
 
             state.lat = latLng.lat;
             state.lng = latLng.lng;
+
+            state.in_marker_radius = false;
 
             wire.$refresh();
         });
@@ -104,6 +107,64 @@
             loadingElement.style.display = 'none';
         }, 500);
     }
+
+    function addMarkers(map, user_mark, state, wire) {
+        // Get predefined markers from the props
+        const markers = @js($props['markers']);
+
+        // Iterate over all predefined markers
+        for (let i = 0; i < markers.length; i++) {
+            const marker = markers[i];
+
+            // Add a circle and marker for each predefined marker
+            L.circle([marker.lat, marker.lng], {
+                radius: marker.radius,
+                color: marker.color,
+            }).addTo(map);
+            L.marker([marker.lat, marker.lng]).addTo(map).bindPopup(marker.label).setIcon(L.icon({
+                iconUrl: `https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${marker.color}.png`,
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [0, -33],
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                shadowSize: [41, 41],
+                shadowAnchor: [12, 41]
+            }));
+
+            const latLng = user_mark.getLatLng();
+
+            // Calculate the distance between the user's marker and the current predefined marker
+            const distance = map.distance(latLng, [marker.lat, marker.lng]);
+
+            // Check if the distance is within the marker's radius
+            if (distance <= marker.radius) {
+
+                state.in_marker_radius = true;
+                state.location_id = marker.id;
+
+                wire.$refresh();
+            }
+        }
+    }
+
+
+    // function addMarkers(map, user_mark) {
+
+    //     const markers = @js($props['markers']);
+    //     for (let i = 0; i < markers.length; i++) {
+    //         const marker = markers[i];
+    //         L.circle([marker.lat, marker.lng], {radius: marker.radius, color: 'green'}).addTo(map);
+    //         L.marker([marker.lat, marker.lng]).addTo(map).bindPopup(marker.label).setIcon(L.icon({
+    //             iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+    //             iconSize: [25, 41],
+    //             iconAnchor: [12, 41],
+    //             popupAnchor: [0, -33],
+    //             shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    //             shadowSize: [41, 41],
+    //             shadowAnchor: [12, 41]
+    //         }));
+    //     }
+    // }
 </script>
 
 <style>

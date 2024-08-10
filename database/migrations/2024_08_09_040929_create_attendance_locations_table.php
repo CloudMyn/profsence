@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('address', 199);
 
+            $table->enum('color', ['red', 'green', 'yellow', 'orange', 'blue', 'black', 'grey', 'violet'])->default('red');
+
             $table->integer('allowance')->default(15)->comment('allowance in minutes');
             $table->integer('radius')->default(20)->comment('location radius in meter');
 

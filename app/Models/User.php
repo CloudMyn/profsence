@@ -43,4 +43,26 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    public function scopeisAdmin()
+    {
+        return $this->role == 'admin' || $this->role == 'developer';
+    }
+
+    public function scopeisDev()
+    {
+        return $this->role == 'developer';
+    }
+
+
+    public function scopeisDosen()
+    {
+        return $this->role == 'dosen';
+    }
 }

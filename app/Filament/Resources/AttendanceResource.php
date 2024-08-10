@@ -6,19 +6,23 @@ use App\Filament\Resources\AttendanceResource\Pages;
 use App\Filament\Resources\AttendanceResource\RelationManagers;
 use App\Forms\Components\MapInput;
 use App\Models\Attendance;
+use App\Models\AttendanceLocation;
 use Dotswan\MapPicker\Fields\Map;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Carbon;
 
 class AttendanceResource extends Resource
 {
@@ -43,6 +47,11 @@ class AttendanceResource extends Resource
     public static function canEdit(Model $record): bool
     {
         return false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()->role == 'admin';
     }
 
     /**
@@ -83,32 +92,68 @@ class AttendanceResource extends Resource
         return $form
             ->schema([
 
-                TextInput::make('latitude')
-                    ->label('Kordinat Lintang ( Latitude )')
-                    ->readOnly()
-                    ->required(),
+                FileUpload::make('photo')
+                    ->label('Bukti Kehadiran')
+                    ->image()
+                    ->directory('bukti_kehadiran')
+                    ->required()
+                    ->columnSpanFull()
+                    ->imageEditor()
+                    ->minSize(12)
+                    ->maxSize(1024  * 10),
 
-                TextInput::make('longitude')
-                    ->label('Kordinat Bujur ( Longitude )')
-                    ->readOnly()
-                    ->required(),
+                TextInput::make('note')
+                    ->label('Catatan')
+                    ->minLength(3)
+                    ->maxLength(255),
+
+                TextInput::make('status_')
+                    ->label('Status Absensi')
+                    ->hiddenOn('view')
+                    ->disabled(),
+
+
+                TextInput::make('type')
+                    ->label('Jenis Absensi')
+                    ->disabled()
+                    ->hiddenOn('create'),
+
+                TextInput::make('violation_note')
+                    ->label('Pelanggaran Absensi')
+                    ->columnSpanFull()
+                    ->afterStateHydrated(function ($record) {
+                        return "aa";
+                    })
+                    ->disabled()
+                    ->hiddenOn('create'),
 
                 MapInput::make('input_map')
                     ->label('Lokasi Saya')
+                    ->hiddenOn('view')
                     ->default([
                         'lat' => 1.226580,
-                        'lng' => 124.819360
+                        'lng' => 124.819360,
+                        'in_marker_radius'  =>  false,
                     ])
                     ->afterStateUpdated(function (Set $set, ?array $state): void {
-                        $set('latitude', $state['lat']);
-                        $set('longitude', $state['lng']);
+
+                        if ($state['in_marker_radius']) {
+                            $location_name  =   AttendanceLocation::find($state['location_id'])->name;
+
+                            $status = 'Anda berada di dalam zona absensi ' . $location_name;
+                        } else {
+                            $status = 'Anda tidak berada di dalam zona absensi!';
+                        }
+
+                        $set('status_', ucwords($status));
                     })
                     ->afterStateHydrated(function ($state, $record, Set $set): void {
                         if (is_null($record)) return;
                         $set('location', ['lat' => $record->latitude, 'lng' => $record->longitude]);
                     })
-                    ->setHeight('50vh')
+                    ->setHeight('40vh')
                     ->draggable(false)
+                    ->setMarkers(AttendanceLocation::getLocations())
                     ->columnSpanFull(),
 
             ]);
@@ -118,13 +163,60 @@ class AttendanceResource extends Resource
     {
         return $table
             ->columns([
-                //
+
+                TextColumn::make('user.name')
+                    ->label("Nama Pengguna")
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('type')
+                    ->label("Jenis Absensi")
+                    ->state(function ($record) {
+                        return $record->type === 'check_in' ? 'Absen Masuk' : 'Absen Keluar';
+                    })
+                    ->sortable()
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'Absen Masuk'  => 'info',
+                        'Absen Keluar' => 'danger',
+                    })
+                    ->searchable(),
+
+
+                TextColumn::make('check_violation')
+                    ->label("Pelanggaran Absensi")
+                    ->state(function ($record) {
+                        return $record->check_violation === true ? 'Terdapat Pelanggaran' : 'Tidak Ada Pelanggaran';
+                    })
+                    ->sortable()
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'Tidak Ada Pelanggaran' => 'success',
+                        'Terdapat Pelanggaran'  => 'danger',
+                    }),
+
+                TextColumn::make('time')
+                    ->label('Jam Input')
+                    ->state(function ($record) {
+                        $date   =   Carbon::parse($record->time)->setTimezone('Asia/Makassar')->isoFormat('hh:mm a');
+                        return ucwords($date);
+                    }),
+
+                TextColumn::make('date')
+                    ->label('Tanggal Kehadiran')
+                    ->state(function ($record) {
+                        $date   =   Carbon::parse($record->date)->locale('id')->isoFormat('dddd, D MMMM YYYY');
+                        return ucwords($date);
+                    }),
+
             ])
             ->filters([
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

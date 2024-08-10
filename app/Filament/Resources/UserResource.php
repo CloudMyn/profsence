@@ -31,6 +31,12 @@ class UserResource extends Resource
 
     protected static ?string $navigationGroup = 'Pengguna';
 
+    public static function canAccess(): bool
+    {
+        return static::canViewAny();
+    }
+
+
     public static function form(Form $form): Form
     {
         return $form
