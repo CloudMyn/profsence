@@ -40,6 +40,11 @@ class AttendanceLocationResource extends Resource
 
     protected static ?string $navigationGroup = 'Manajemen Kehadiran';
 
+    public static function canAccess(): bool
+    {
+        return \App\Models\User::isAdmin();
+    }
+
     public static function form(Form $form): Form
     {
 

@@ -15,14 +15,14 @@ class DatabaseSeeder extends Seeder
     {
         $users  =   [
             [
-                'name'      =>  'Admin',
+                'name'      =>  'Akun Admin',
                 'email'     =>  'admin@mail.io',
                 'password'  =>  Hash::make('password'),
                 'role'      =>  'admin',
                 'email_verified_at' =>  now(),
             ],
             [
-                'name'      =>  'Dosen',
+                'name'      =>  'Akun Dosen',
                 'email'     =>  'dosen@mail.io',
                 'password'  =>  Hash::make('password'),
                 'role'      =>  'dosen',

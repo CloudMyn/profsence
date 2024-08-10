@@ -31,8 +31,18 @@
 
                 // Add a draggable marker to the map
                 const marker = L.marker([lat, lng], {
-                    draggable: @js($props['draggable'])
-                }).addTo(map).bindPopup("Lokasi Anda!");
+                        draggable: @js($props['draggable'])
+                    }).addTo(map)
+                    .bindPopup("Lokasi Anda!")
+                    .setIcon(L.icon({
+                        iconUrl: `https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png`,
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [0, -33],
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        shadowSize: [41, 41],
+                        shadowAnchor: [12, 41]
+                    }));
 
                 addMarkers(map, marker, state, wire);
 
@@ -82,8 +92,18 @@
 
         // Add a draggable marker to the map
         const marker = L.marker([state.lat, state.lng], {
-            draggable: @js($props['draggable'])
-        }).addTo(map).bindPopup("Lokasi Anda!");
+                draggable: @js($props['draggable'])
+            }).addTo(map)
+            .bindPopup("Lokasi Anda!")
+            .setIcon(L.icon({
+                iconUrl: `https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png`,
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [0, -33],
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                shadowSize: [41, 41],
+                shadowAnchor: [12, 41]
+            }));
 
 
         // Update state when the marker is dragged
@@ -182,7 +202,7 @@
 
     /* Loading Overlay */
     .loading-overlay {
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         right: 0;

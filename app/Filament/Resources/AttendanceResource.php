@@ -7,6 +7,7 @@ use App\Filament\Resources\AttendanceResource\RelationManagers;
 use App\Forms\Components\MapInput;
 use App\Models\Attendance;
 use App\Models\AttendanceLocation;
+use App\Models\User;
 use Dotswan\MapPicker\Fields\Map;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
@@ -51,7 +52,18 @@ class AttendanceResource extends Resource
 
     public static function canDelete(Model $record): bool
     {
-        return auth()->user()->role == 'admin';
+        return User::isAdmin();
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = static::getModel()::query()->orderBy('created_at', 'DESC');
+
+        if (User::isDosen()) {
+            $query->where('user_id', auth()->user()->id);
+        }
+
+        return $query;
     }
 
     /**
@@ -181,7 +193,6 @@ class AttendanceResource extends Resource
                         'Absen Keluar' => 'danger',
                     })
                     ->searchable(),
-
 
                 TextColumn::make('check_violation')
                     ->label("Pelanggaran Absensi")
