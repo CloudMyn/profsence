@@ -2,10 +2,12 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Widgets\WelcomeWidget;
 use BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -42,7 +44,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -54,6 +56,21 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+            ])
+            ->spaUrlExceptions([
+                '*/admin/attendance-locations/*',
+            ])
+            ->navigationItems([
+                NavigationItem::make('Pengaturan')
+                    ->url('/admin/exceptions')
+                    ->icon('heroicon-o-cpu-chip')
+                    ->group('Pengaturan')
+                    ->label('Log Error')
+                    ->visible(function () {
+                        return \App\Models\User::isAdmin();
+                    })
+                    ->isActiveWhen(fn() => request()->routeIs('admin/exceptions/*'))
+                    ->sort(5),
             ])
             ->plugins([
                 FilamentExceptionsPlugin::make(),
@@ -67,6 +84,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->spa();
     }
 }

@@ -10,6 +10,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Navigation\NavigationItem;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -33,9 +34,8 @@ class UserResource extends Resource
 
     public static function canAccess(): bool
     {
-        return static::canViewAny();
+        return \App\Models\User::isAdmin();
     }
-
 
     public static function form(Form $form): Form
     {
