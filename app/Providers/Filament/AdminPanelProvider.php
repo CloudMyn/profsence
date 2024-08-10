@@ -4,10 +4,14 @@ namespace App\Providers\Filament;
 
 use App\Filament\Widgets\AppOverview;
 use App\Filament\Widgets\WelcomeWidget;
+use App\Models\User;
 use BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationBuilder;
+use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
@@ -24,6 +28,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 use Swis\Filament\Backgrounds\ImageProviders\MyImages;
+use TomatoPHP\FilamentPWA\FilamentPWAPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -64,6 +69,10 @@ class AdminPanelProvider extends PanelProvider
             ->spaUrlExceptions([
                 '*/admin/attendance-locations/*',
             ])
+            ->sidebarCollapsibleOnDesktop()
+            ->topNavigation(function () {
+                return User::isDosen();
+            })
             ->navigationItems([
                 NavigationItem::make('Pengaturan')
                     ->url('/admin/exceptions')
@@ -72,6 +81,29 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Log Error')
                     ->visible(function () {
                         return \App\Models\User::isAdmin();
+                    })
+                    ->isActiveWhen(fn() => request()->routeIs('admin/exceptions/*'))
+                    ->sort(5),
+
+
+                NavigationItem::make('Settings Hub')
+                    ->url('/admin/pwa-settings-page')
+                    ->icon('heroicon-o-cog')
+                    ->group('Pengaturan')
+                    ->label('PWA Settings')
+                    ->visible(function () {
+                        return \App\Models\User::isAdmin();
+                    })
+                    ->isActiveWhen(fn() => request()->routeIs('admin/pwa-settings-page/*'))
+                    ->sort(5),
+
+                NavigationItem::make('Settings Hub')
+                    ->url('/admin/settings-hub')
+                    ->icon('heroicon-o-cog')
+                    ->group('Settings')
+                    ->label('Settings Hub')
+                    ->visible(function () {
+                        return false;
                     })
                     ->isActiveWhen(fn() => request()->routeIs('admin/exceptions/*'))
                     ->sort(5),
@@ -88,11 +120,26 @@ class AdminPanelProvider extends PanelProvider
                     ->setTitle('Profile Saya')
                     ->setNavigationLabel('Profile Saya')
                     ->setIcon('heroicon-o-user')
+                    ->shouldRegisterNavigation(function () {
+                        return \App\Models\User::isAdmin();
+                    })
                     ->setSort(10),
+
+                FilamentPWAPlugin::make(),
             ])
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->spa();
+            ->favicon('/favicon.png')
+            ->brandLogo(function () {
+                return view('logo');
+            })
+            ->spa()
+            ->userMenuItems([
+                'profile' => MenuItem::make()
+                    ->label('Edit profile')
+                    ->url('/admin/my-profile'),
+                // ...
+            ]);
     }
 }

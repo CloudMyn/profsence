@@ -1,5 +1,6 @@
 <?php
 
+use App\Providers\FilamentServiceProvider;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 
@@ -169,6 +170,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\Filament\AdminPanelProvider::class,
         App\Providers\RouteServiceProvider::class,
+        FilamentServiceProvider::class,
     ])->toArray(),
 
     /*
