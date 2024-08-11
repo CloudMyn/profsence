@@ -203,6 +203,7 @@ class AttendanceLocationResource extends Resource
 
                 TextColumn::make('address')
                     ->label('Alamat')
+                    ->limit(30)
                     ->sortable()
                     ->searchable(),
 
