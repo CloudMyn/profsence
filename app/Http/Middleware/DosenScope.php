@@ -19,6 +19,8 @@ class DosenScope
 
         if(User::isDosen()) {
             return $next($request);
+        } else {
+            return redirect('/admin');
         }
 
         abort(403);
