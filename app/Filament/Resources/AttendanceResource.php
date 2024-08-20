@@ -12,6 +12,7 @@ use Dotswan\MapPicker\Fields\Map;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -73,16 +74,33 @@ class AttendanceResource extends Resource
     {
         return [
             NavigationItem::make('Input Kehadiran')
-                ->url(static::getUrl('create'))
+                ->url(static::getUrl('create', ['type' => 'absen']))
                 ->icon('heroicon-o-plus')
                 ->group(static::getNavigationGroup())
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn() => request()->routeIs(static::getRouteBaseName() . '.create'))
+                ->isActiveWhen(function () {
+                    return request()->type == 'absen';
+                })
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort()),
+
+
+            // NavigationItem::make('Input izin')
+            //     ->url(static::getUrl('create', ['type' => 'izin']))
+            //     ->icon('heroicon-o-plus')
+            //     ->group(static::getNavigationGroup())
+            //     ->parentItem(static::getNavigationParentItem())
+            //     ->icon(static::getNavigationIcon())
+            //     ->activeIcon(static::getActiveNavigationIcon())
+            //     ->isActiveWhen(function () {
+            //         return request()->type == 'izin';
+            //     })
+            //     ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
+            //     ->badgeTooltip(static::getNavigationBadgeTooltip())
+            //     ->sort(static::getNavigationSort()),
 
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
@@ -101,75 +119,109 @@ class AttendanceResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-
-                FileUpload::make('photo')
-                    ->label('Bukti Kehadiran')
-                    ->image()
-                    ->directory('bukti_kehadiran')
-                    ->required()
-                    ->columnSpanFull()
-                    ->imageEditor()
-                    ->minSize(12)
-                    ->maxSize(1024  * 10),
-
-                TextInput::make('note')
-                    ->label('Catatan')
-                    ->minLength(3)
-                    ->maxLength(255),
-
-                TextInput::make('status_')
-                    ->label('Status Absensi')
-                    ->hiddenOn('view')
-                    ->disabled(),
-
-
-                TextInput::make('type')
-                    ->label('Jenis Absensi')
-                    ->disabled()
-                    ->hiddenOn('create'),
-
-                TextInput::make('violation_note')
-                    ->label('Pelanggaran Absensi')
-                    ->columnSpanFull()
-                    ->afterStateHydrated(function ($record) {
-                        return "aa";
-                    })
-                    ->disabled()
-                    ->hiddenOn('create'),
-
-                MapInput::make('input_map')
-                    ->label('Lokasi Saya')
-                    ->hiddenOn('view')
-                    ->default([
-                        'lat' => 1.226580,
-                        'lng' => 124.819360,
-                        'in_marker_radius'  =>  false,
-                    ])
-                    ->afterStateUpdated(function (Set $set, ?array $state): void {
-
-                        if ($state['in_marker_radius']) {
-                            $location_name  =   AttendanceLocation::find($state['location_id'])->name;
-
-                            $status = 'Anda berada di dalam zona absensi ' . $location_name;
-                        } else {
-                            $status = 'Anda tidak berada di dalam zona absensi!';
-                        }
-
-                        $set('status_', ucwords($status));
-                    })
-                    ->afterStateHydrated(function ($state, $record, Set $set): void {
-                        if (is_null($record)) return;
-                        $set('location', ['lat' => $record->latitude, 'lng' => $record->longitude]);
-                    })
-                    ->setHeight('40vh')
-                    ->draggable(false)
-                    ->setMarkers(AttendanceLocation::getLocations())
-                    ->columnSpanFull(),
-
-            ]);
+        return $form->schema(static::getFormOriginal());
     }
+
+    public static function getFormOriginal(): array
+    {
+        return [
+
+            FileUpload::make('photo')
+                ->label('Bukti Kehadiran')
+                ->image()
+                ->directory('bukti_kehadiran')
+                ->required()
+                ->columnSpanFull()
+                ->imageEditor()
+                ->minSize(12)
+                ->maxSize(1024  * 10),
+
+            TextInput::make('note')
+                ->label('Catatan')
+                ->minLength(3)
+                ->maxLength(255),
+
+            TextInput::make('status_')
+                ->label('Status Absensi')
+                ->hiddenOn('view')
+                ->disabled(),
+
+
+            TextInput::make('type')
+                ->label('Jenis Absensi')
+                ->disabled()
+                ->hiddenOn('create'),
+
+            TextInput::make('violation_note')
+                ->label('Pelanggaran Absensi')
+                ->columnSpanFull()
+                ->afterStateHydrated(function ($record) {
+                    return "aa";
+                })
+                ->disabled()
+                ->hiddenOn('create'),
+
+            MapInput::make('input_map')
+                ->label('Lokasi Saya')
+                ->hiddenOn('view')
+                ->default([
+                    'lat' => 1.226580,
+                    'lng' => 124.819360,
+                    'in_marker_radius'  =>  false,
+                ])
+                ->afterStateUpdated(function (Set $set, ?array $state): void {
+
+                    if ($state['in_marker_radius']) {
+                        $location_name  =   AttendanceLocation::find($state['location_id'])->name;
+
+                        $status = 'Anda berada di dalam zona absensi ' . $location_name;
+                    } else {
+                        $status = 'Anda tidak berada di dalam zona absensi!';
+                    }
+
+                    $set('status_', ucwords($status));
+                })
+                ->afterStateHydrated(function ($state, $record, Set $set): void {
+                    if (is_null($record)) return;
+                    $set('location', ['lat' => $record->latitude, 'lng' => $record->longitude]);
+                })
+                ->setHeight('40vh')
+                ->draggable(false)
+                ->setMarkers(AttendanceLocation::getLocations())
+                ->columnSpanFull(),
+
+        ];
+    }
+
+
+    public static function getFormIzin(): array
+    {
+        return [
+            FileUpload::make('photo')
+                ->label('Bukti Izin berupa Surat Sakit/Surat Dinas/Surat Cuti')
+                ->image()
+                ->directory('bukti_kehadiran')
+                ->required()
+                ->columnSpanFull()
+                ->imageEditor()
+                ->minSize(12)
+                ->maxSize(1024  * 10),
+
+            Select::make('status_absent')
+                ->label('Jenis Izin')
+                ->options([
+                    'sick'              =>  'Izin Sakit',
+                    'leave'             =>  'Izin Cuti',
+                    'official_leave'    =>  'Izin Dinas',
+                ]),
+
+            TextInput::make('note')
+                ->label('Keterangan izin')
+                ->minLength(3)
+                ->maxLength(255),
+        ];
+    }
+
 
     public static function table(Table $table): Table
     {
@@ -247,7 +299,7 @@ class AttendanceResource extends Resource
     {
         return [
             'index' => Pages\ListAttendances::route('/'),
-            'create' => Pages\CreateAttendance::route('/create'),
+            'create' => Pages\CreateAttendance::route('/create/{type}'),
             'edit' => Pages\EditAttendance::route('/{record}/edit'),
         ];
     }

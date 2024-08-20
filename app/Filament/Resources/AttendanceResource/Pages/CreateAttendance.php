@@ -7,15 +7,25 @@ use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 
 class CreateAttendance extends CreateRecord
 {
     protected static string $resource = AttendanceResource::class;
 
-    protected static ?string $title = "Input Kehadiran";
-
     protected static bool $canCreateAnother = false;
+
+    public function getTitle(): string | Htmlable
+    {
+        $label  =   request()->type === 'izin' ? 'Izin Kehadiran' : 'Absen Kehadiran';
+
+        static::$title = $label;
+
+        return __('filament-panels::resources/pages/create-record.title', [
+            'label' => $label,
+        ]);
+    }
 
     /**
      * @param  array<string, mixed>  $data
@@ -23,6 +33,9 @@ class CreateAttendance extends CreateRecord
      */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+
+        if(isset($data['status_absent'])) return $data;
+
         $input_map  =   $data['input_map'];
 
         if (!$input_map['in_marker_radius']) {

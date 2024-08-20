@@ -15,10 +15,7 @@ class ListAttendances extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            Actions\CreateAction::make()
-                ->label("Input Kehadiran"),
-        ];
+        return [];
     }
 
     protected function getHeaderWidgets(): array

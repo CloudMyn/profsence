@@ -14,18 +14,20 @@ return new class extends Migration
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
-            $table->foreignId('location_id');
+            $table->foreignId('location_id')->nullable();
 
             $table->date('date');
             $table->time('time');
 
-            $table->string('photo', 255);
+            $table->string('photo', 255)->nullable();
             $table->string('note')->nullable();
 
-            $table->enum('type', ['check_in', 'check_out']);
+            $table->enum('type', ['check_in', 'check_out', 'sick', 'absent', 'leave', 'official_leave']);
 
-            $table->string('latitude');
-            $table->string('longitude');
+            $table->string('latitude')->nullable();
+            $table->string('longitude')->nullable();
+
+            $table->enum('status_absent', ['approved', 'disapproved', 'pending'])->default('pending');
 
             $table->boolean('check_violation')->default(false);
             $table->string('violation_note')->nullable();

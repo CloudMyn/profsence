@@ -73,6 +73,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->spaUrlExceptions([
                 '*/admin/attendance-locations/*',
+                '*/admin/attendances/create/*',
             ])
             ->navigationItems([
 
