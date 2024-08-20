@@ -255,7 +255,7 @@
         <!-- Map Container -->
         <div class="relative w-full h-64 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg shadow-md"
             x-init="initMap($refs.map, state, $wire, $refs.loading_map)">
-            <div wire:ignore x-ref="map" class="w-full h-full rounded-lg" style="height: {{ $props['height'] }};">
+            <div wire:ignore x-ref="map" class="w-full h-full rounded-lg" style="height: {{ $props['height'] }}; z-index: 3">
             </div>
         </div>
     </div>
