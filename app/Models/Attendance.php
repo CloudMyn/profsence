@@ -46,8 +46,6 @@ class Attendance extends Model
 
             if ($this->type) return;
 
-            throw new \Exception($this->type);
-
             $user_has_check_in  =   $user->attendances()
                 ->whereDate('created_at', now()->format('Y-m-d'))
                 ->where('type', 'check_in')

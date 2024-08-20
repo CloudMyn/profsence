@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PDFExporterController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -25,3 +26,6 @@ Route::get('/', function () {
 Route::get('/login', function () {
     return redirect('/admin/login');
 })->name('login');
+
+
+Route::get('/presensi/{user:id}/export-pelanggaran', [PDFExporterController::class, 'exportPelanggaran'])->name('pdf-export.pelanggaran');

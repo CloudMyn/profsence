@@ -79,6 +79,8 @@ class CreateAttendance extends CreateRecord
             return $record;
         } catch (\Throwable $th) {
 
+            report($th);
+
             Notification::make()
                 ->warning()
                 ->title('Terjadi Kesalahan')

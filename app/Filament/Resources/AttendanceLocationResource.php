@@ -65,7 +65,7 @@ class AttendanceLocationResource extends Resource
                 FileUpload::make('photo')
                     ->label('Gambar')
                     ->directory('lokasi_absensi')
-                    ->minSize(24)
+                    ->minSize(1)
                     ->maxSize(1024 * 10)
                     ->image()
                     ->required()
