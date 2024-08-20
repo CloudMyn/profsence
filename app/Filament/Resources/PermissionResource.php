@@ -208,7 +208,7 @@ class PermissionResource extends Resource
                             Notification::make()
                                 ->title('Berhasil')
                                 ->success()
-                                ->body('Persetujuan Izin Berhasil di lakukan')
+                                ->body('Persetujuan Izin Berhasil di approve')
                                 ->send();
 
                             Notification::make()
@@ -238,6 +238,41 @@ class PermissionResource extends Resource
                     ->requiresConfirmation()
                     ->visible(function ($record) {
                         return \App\Models\User::isAdmin() && !$record->approved_at;
+                    })
+                    ->action(function ($record) {
+                        try {
+
+                            DB::beginTransaction();
+
+                            $user   =   auth()->user();
+
+                            $record->delete();
+
+                            Notification::make()
+                                ->title('Berhasil')
+                                ->success()
+                                ->body('Persetujuan Izin Berhasil di tolak')
+                                ->send();
+
+                            Notification::make()
+                                ->title('Approval izin')
+                                ->success()
+                                ->body('Persetujuan Izin anda telah di tolak oleh ' . $user->name)
+                                ->sendToDatabase($record->user, true);
+
+                            DB::commit();
+                        } catch (\Throwable $th) {
+
+                            report($th);
+
+                            Notification::make()
+                                ->title('Gagal')
+                                ->danger()
+                                ->body('Terdapat kesalahah!!, Persetujuan Izin gagal di lakukan Error : ' . $th->getMessage())
+                                ->send();
+
+                            DB::rollBack();
+                        }
                     })
                     ->icon('heroicon-o-x-circle'),
 
