@@ -30,16 +30,15 @@ class AttendanceResource extends Resource
 {
     protected static ?string $model = Attendance::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
 
     protected static ?string $label =   'Tabel Kehadiran';
 
     protected static ?string $navigationLabel = 'Kehadiran Pengguna';
 
-    protected static ?int $navigationSort = 2;
-
     protected static ?string $navigationGroup = 'Manajemen Kehadiran';
 
+    protected static ?int $navigationSort = 2;
 
     public static function canCreate(): bool
     {
@@ -54,6 +53,11 @@ class AttendanceResource extends Resource
     public static function canDelete(Model $record): bool
     {
         return User::isAdmin();
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return User::isDosen() ? null : static::$navigationGroup;
     }
 
     public static function getEloquentQuery(): Builder
@@ -74,18 +78,19 @@ class AttendanceResource extends Resource
     {
         return [
             NavigationItem::make('Input Kehadiran')
-                ->url(static::getUrl('create', ['type' => 'absen']))
-                ->icon('heroicon-o-plus')
+                ->url(static::getUrl('create'))
+                ->icon('heroicon-o-finger-print')
                 ->group(static::getNavigationGroup())
                 ->parentItem(static::getNavigationParentItem())
-                ->icon(static::getNavigationIcon())
-                ->activeIcon(static::getActiveNavigationIcon())
+                ->visible(function () {
+                    return User::isDosen();
+                })
                 ->isActiveWhen(function () {
-                    return request()->type == 'absen';
+                    return request()->routeIs(static::getRouteBaseName() . '.create');
                 })
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
-                ->sort(static::getNavigationSort()),
+                ->sort(2),
 
 
             // NavigationItem::make('Input izin')
@@ -112,8 +117,8 @@ class AttendanceResource extends Resource
                 })
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
-                ->sort(static::getNavigationSort())
-                ->url(static::getNavigationUrl()),
+                ->sort(4)
+                ->url(static::getUrl('index')),
         ];
     }
 
@@ -194,35 +199,6 @@ class AttendanceResource extends Resource
     }
 
 
-    public static function getFormIzin(): array
-    {
-        return [
-            FileUpload::make('photo')
-                ->label('Bukti Izin berupa Surat Sakit/Surat Dinas/Surat Cuti')
-                ->image()
-                ->directory('bukti_kehadiran')
-                ->required()
-                ->columnSpanFull()
-                ->imageEditor()
-                ->minSize(12)
-                ->maxSize(1024  * 10),
-
-            Select::make('status_absent')
-                ->label('Jenis Izin')
-                ->options([
-                    'sick'              =>  'Izin Sakit',
-                    'leave'             =>  'Izin Cuti',
-                    'official_leave'    =>  'Izin Dinas',
-                ]),
-
-            TextInput::make('note')
-                ->label('Keterangan izin')
-                ->minLength(3)
-                ->maxLength(255),
-        ];
-    }
-
-
     public static function table(Table $table): Table
     {
         return $table
@@ -236,13 +212,24 @@ class AttendanceResource extends Resource
                 TextColumn::make('type')
                     ->label("Jenis Absensi")
                     ->state(function ($record) {
-                        return $record->type === 'check_in' ? 'Absen Masuk' : 'Absen Keluar';
+                        return match ($record->type) {
+                            'check_in'  =>  'Absen Masuk',
+                            'check_out' =>  'Absen Keluar',
+                            'sakit'     =>  'Izin Sakit',
+                            'alfa'      =>  'Tidak Hadir',
+                            'cuti'      =>  'Ambil Cuti',
+                            'dinas_luar'    =>  'Izin Dinas KeLuar',
+                        };
                     })
                     ->sortable()
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
-                        'Absen Masuk'  => 'info',
-                        'Absen Keluar' => 'danger',
+                        'Absen Masuk'   =>  'success',
+                        'Absen Keluar'  =>  'success',
+                        'Izin Sakit'    =>  'warning',
+                        'Tidak Hadir'   =>  'danger',
+                        'Ambil Cuti'    =>  'primary',
+                        'Izin Dinas KeLuar'    =>  'info',
                     })
                     ->searchable(),
 
@@ -299,7 +286,7 @@ class AttendanceResource extends Resource
     {
         return [
             'index' => Pages\ListAttendances::route('/'),
-            'create' => Pages\CreateAttendance::route('/create/{type}'),
+            'create' => Pages\CreateAttendance::route('/create'),
             'edit' => Pages\EditAttendance::route('/{record}/edit'),
         ];
     }

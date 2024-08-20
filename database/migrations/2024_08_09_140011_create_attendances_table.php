@@ -20,14 +20,12 @@ return new class extends Migration
             $table->time('time');
 
             $table->string('photo', 255)->nullable();
-            $table->string('note')->nullable();
+            $table->string('note', 199)->nullable();
 
-            $table->enum('type', ['check_in', 'check_out', 'sick', 'absent', 'leave', 'official_leave']);
+            $table->enum('type', ['check_in', 'check_out', 'sakit', 'alfa', 'cuti', 'dinas_luar']);
 
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
-
-            $table->enum('status_absent', ['approved', 'disapproved', 'pending'])->default('pending');
 
             $table->boolean('check_violation')->default(false);
             $table->string('violation_note')->nullable();

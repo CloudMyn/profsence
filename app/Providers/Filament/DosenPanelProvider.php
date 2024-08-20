@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\PermissionResource\Widgets\PermissionOverview;
 use App\Filament\Widgets\AppOverview;
 use App\Filament\Widgets\WelcomeWidget;
 use App\Http\Middleware\DosenScope;
@@ -50,6 +51,7 @@ class DosenPanelProvider extends PanelProvider
             ->widgets([
                 WelcomeWidget::class,
                 AppOverview::class,
+                PermissionOverview::class,
                 // Widgets\AccountWidget::class,
                 // Widgets\FilamentInfoWidget::class,
             ])
@@ -89,6 +91,7 @@ class DosenPanelProvider extends PanelProvider
                 return view('logo');
             })
             ->spa()
+            ->databaseNotifications()
             ->userMenuItems([
                 'profile' => MenuItem::make()
                     ->label('Edit profile')

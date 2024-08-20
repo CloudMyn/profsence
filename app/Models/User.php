@@ -50,6 +50,11 @@ class User extends Authenticatable
         return $this->hasMany(Attendance::class);
     }
 
+    public function permissions()
+    {
+        return $this->hasMany(Permission::class);
+    }
+
     public function scopeisAdmin()
     {
         return auth()->user()?->role == 'admin' || auth()->user()?->role == 'developer';

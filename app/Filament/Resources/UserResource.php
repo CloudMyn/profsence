@@ -99,6 +99,12 @@ class UserResource extends Resource
                     ->searchable()
                     ->sortable(),
 
+                TextColumn::make('role')
+                    ->label('Peran')
+                    ->badge()
+                    ->searchable()
+                    ->sortable(),
+
                 TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime()

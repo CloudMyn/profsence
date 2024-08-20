@@ -33,15 +33,20 @@ class Attendance extends Model
 
         if (!$user) abort(403, 'Unauthorized action.');
 
+
         $user_has_check_in  =   false;
         $user_has_check_out =   false;
 
         if ($user instanceof User) {
 
-            $this->user_id  =   $user->id;
+            $this->user_id  =   $this->user_id  ?? $user->id;
 
-            $this->date = now()->format('Y-m-d');
-            $this->time = now()->format('H:i:s');
+            $this->date = $this->date ?? now()->format('Y-m-d');
+            $this->time = $this->time ?? now()->format('H:i:s');
+
+            if ($this->type) return;
+
+            throw new \Exception($this->type);
 
             $user_has_check_in  =   $user->attendances()
                 ->whereDate('created_at', now()->format('Y-m-d'))
@@ -52,7 +57,6 @@ class Attendance extends Model
                 ->whereDate('created_at', now()->format('Y-m-d'))
                 ->where('type', 'check_out')
                 ->exists();
-
 
             if ($user_has_check_in && $user_has_check_out) {
                 throw new \Exception('Pengguna sudah absen masuk & pulang hari ini.');
@@ -74,6 +78,8 @@ class Attendance extends Model
         if ($user instanceof User) {
 
             $this->violation_note = 'Tidak Ada Pelanggaran.';
+
+            if (!$this->location) return;
 
             $time_in = Carbon::parse($this->location->time_in);
             $time_out = Carbon::parse($this->location->time_out);

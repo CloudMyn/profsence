@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\PermissionResource\Widgets\PermissionOverview;
 use App\Filament\Widgets\AppOverview;
 use App\Filament\Widgets\WelcomeWidget;
 use App\Http\Middleware\AdminScope;
@@ -56,6 +57,7 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 WelcomeWidget::class,
                 AppOverview::class,
+                PermissionOverview::class,
                 // Widgets\AccountWidget::class,
                 // Widgets\FilamentInfoWidget::class,
             ])
@@ -136,6 +138,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(function () {
                 return view('logo');
             })
+            ->databaseNotifications()
             ->spa()
             ->userMenuItems([
                 'profile' => MenuItem::make()
