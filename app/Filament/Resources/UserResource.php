@@ -77,7 +77,6 @@ class UserResource extends Resource
 
                     TextInput::make('confirm_password')
                         ->label('Konfirmasi Katasandi')
-                        ->matc()
                         ->revealable()
                         ->same('password'),
 
