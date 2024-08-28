@@ -67,18 +67,19 @@ class UserResource extends Resource
 
                     TextInput::make('password')
                         ->label('Katasandi')
-                        ->password()
-                        ->revealable()
                         ->required(function ($record) {
                             return !$record;
                         })
+                        ->password()
+                        ->revealable()
                         ->minLength(3)
                         ->maxLength(199),
 
                     TextInput::make('confirm_password')
-                        ->label('Konfirmasi Katasandi')
+                        ->label('Konfirmasi')
+                        ->password()
                         ->revealable()
-                        ->same('password'),
+                        ->same('password')
 
                 ])
 
