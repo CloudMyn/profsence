@@ -79,46 +79,46 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationItems([
 
-                NavigationItem::make('Pengaturan')
-                    ->url('/admin/exceptions')
-                    ->icon('heroicon-o-cpu-chip')
-                    ->group('Pengaturan')
-                    ->label('Log Error')
-                    ->visible(function () {
-                        return \App\Models\User::isAdmin();
-                    })
-                    ->isActiveWhen(fn() => request()->routeIs('admin/exceptions/*'))
-                    ->sort(5),
+                // NavigationItem::make('Pengaturan')
+                //     ->url('/admin/exceptions')
+                //     ->icon('heroicon-o-cpu-chip')
+                //     ->group('Pengaturan')
+                //     ->label('Log Error')
+                //     ->visible(function () {
+                //         return \App\Models\User::isAdmin();
+                //     })
+                //     ->isActiveWhen(fn() => request()->routeIs('admin/exceptions/*'))
+                //     ->sort(5),
 
-                NavigationItem::make('Settings Hub')
-                    ->url('/admin/pwa-settings-page')
-                    ->icon('heroicon-o-cog')
-                    ->group('Pengaturan')
-                    ->label('PWA Settings')
-                    ->visible(function () {
-                        return \App\Models\User::isAdmin();
-                    })
-                    ->isActiveWhen(fn() => request()->routeIs('admin/pwa-settings-page/*'))
-                    ->sort(5),
+                // NavigationItem::make('Settings Hub')
+                //     ->url('/admin/pwa-settings-page')
+                //     ->icon('heroicon-o-cog')
+                //     ->group('Pengaturan')
+                //     ->label('PWA Settings')
+                //     ->visible(function () {
+                //         return \App\Models\User::isAdmin();
+                //     })
+                //     ->isActiveWhen(fn() => request()->routeIs('admin/pwa-settings-page/*'))
+                //     ->sort(5),
 
-                NavigationItem::make('Settings Hub')
-                    ->url('/admin/settings-hub')
-                    ->icon('heroicon-o-cog')
-                    ->group('Settings')
-                    ->label('Settings Hub')
-                    ->visible(function () {
-                        return false;
-                    })
-                    ->isActiveWhen(fn() => request()->routeIs('admin/exceptions/*'))
-                    ->sort(5),
+                // NavigationItem::make('Settings Hub')
+                //     ->url('/admin/settings-hub')
+                //     ->icon('heroicon-o-cog')
+                //     ->group('Settings')
+                //     ->label('Settings Hub')
+                //     ->visible(function () {
+                //         return false;
+                //     })
+                //     ->isActiveWhen(fn() => request()->routeIs('admin/exceptions/*'))
+                //     ->sort(5),
             ])
             ->plugins([
                 // FilamentExceptionsPlugin::make(),
-                // FilamentBackgroundsPlugin::make()
-                //     ->imageProvider(
-                //         MyImages::make()
-                //             ->directory('bg-images')
-                //     ),
+                FilamentBackgroundsPlugin::make()
+                    ->imageProvider(
+                        MyImages::make()
+                            ->directory('bg-images')
+                    ),
                 FilamentEditProfilePlugin::make()
                     ->slug('my-profile')
                     ->setTitle('Profile Saya')
