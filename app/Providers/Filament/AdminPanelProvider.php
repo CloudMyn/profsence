@@ -113,12 +113,12 @@ class AdminPanelProvider extends PanelProvider
                     ->sort(5),
             ])
             ->plugins([
-                FilamentExceptionsPlugin::make(),
-                FilamentBackgroundsPlugin::make()
-                    ->imageProvider(
-                        MyImages::make()
-                            ->directory('bg-images')
-                    ),
+                // FilamentExceptionsPlugin::make(),
+                // FilamentBackgroundsPlugin::make()
+                //     ->imageProvider(
+                //         MyImages::make()
+                //             ->directory('bg-images')
+                //     ),
                 FilamentEditProfilePlugin::make()
                     ->slug('my-profile')
                     ->setTitle('Profile Saya')
