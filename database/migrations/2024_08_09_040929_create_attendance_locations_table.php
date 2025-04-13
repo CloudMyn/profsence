@@ -21,14 +21,14 @@ return new class extends Migration
 
             $table->enum('color', ['red', 'green', 'yellow', 'orange', 'blue', 'black', 'grey', 'violet'])->default('red');
 
-            $table->integer('allowance')->default(15)->comment('allowance in minutes');
+            // $table->integer('allowance')->default(15)->comment('allowance in minutes');
             $table->integer('radius')->default(20)->comment('location radius in meter');
 
             $table->string('latitude');
             $table->string('longitude');
 
-            $table->time('time_in');
-            $table->time('time_out');
+            // $table->time('time_in');
+            // $table->time('time_out');
 
             $table->timestamps();
         });
