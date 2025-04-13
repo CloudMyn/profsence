@@ -56,9 +56,9 @@ class PDFExporterController extends Controller
         ];
 
         $violdations    =   $user->attendances()->whereBetween('created_at', [
-                now()->startOfMonth()->format('Y-m-d'),
-                now()->endOfMonth()->format('Y-m-d')
-            ])->get();
+            now()->startOfMonth()->format('Y-m-d'),
+            now()->endOfMonth()->format('Y-m-d')
+        ])->get();
 
         $formated_table =   [];
 

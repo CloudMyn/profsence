@@ -28,4 +28,4 @@ Route::get('/login', function () {
 })->name('login');
 
 
-Route::get('/presensi/{user:id}/export-pelanggaran', [PDFExporterController::class, 'exportPelanggaran'])->name('pdf-export.pelanggaran');
+Route::get('/presensi/{user:id}/export-absensi', [PDFExporterController::class, 'exportPelanggaran'])->name('pdf-export.pelanggaran');
