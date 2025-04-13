@@ -15,6 +15,12 @@ class AttendanceOverview extends BaseWidget
         return true;
     }
 
+
+    protected function getColumns(): int
+    {
+        return 2;
+    }
+
     protected function getStats(): array
     {
 
@@ -23,13 +29,11 @@ class AttendanceOverview extends BaseWidget
             $attendance_in  =   Attendance::where('type', 'check_in')->count();
             $attendance_out =   Attendance::where('type', 'check_out')->count();
 
-            $attendance_voilation = Attendance::where('check_violation', 1)->count();
         } else {
 
             $attendance_in  =   Attendance::where('user_id', auth()->user()->id)->where('type', 'check_in')->count();
             $attendance_out =   Attendance::where('user_id', auth()->user()->id)->where('type', 'check_out')->count();
 
-            $attendance_voilation = Attendance::where('user_id', auth()->user()->id)->where('check_violation', 1)->count();
         }
 
         return [
@@ -37,8 +41,6 @@ class AttendanceOverview extends BaseWidget
                 ->icon('heroicon-o-check-circle'),
             Stat::make('Absen Keluar', $attendance_out)
                 ->icon('heroicon-o-check-circle'),
-            Stat::make('Pelanggaran Absen', $attendance_voilation . " Kali")
-                ->icon('heroicon-o-exclamation-circle'),
         ];
     }
 }

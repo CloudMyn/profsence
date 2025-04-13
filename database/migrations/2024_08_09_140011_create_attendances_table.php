@@ -27,8 +27,8 @@ return new class extends Migration
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
 
-            $table->boolean('check_violation')->default(false);
-            $table->string('violation_note')->nullable();
+            // $table->boolean('check_violation')->default(false);
+            // $table->string('violation_note')->nullable();
 
             $table->timestamps();
 

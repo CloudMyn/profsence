@@ -42,7 +42,7 @@ class AttendanceLocationResource extends Resource
 
     public static function canAccess(): bool
     {
-        return \App\Models\User::isAdmin();
+        return auth()->user()->isAdmin();
     }
 
     public static function form(Form $form): Form
@@ -89,13 +89,13 @@ class AttendanceLocationResource extends Resource
                     ->columns(2)
                     ->schema([
 
-                        TextInput::make('allowance')
-                            ->label('Toleransi Waktu Absensi')
-                            ->minLength(0)
-                            ->default(15)
-                            ->suffix('Menit')
-                            ->maxLength(99999)
-                            ->required(),
+                        // TextInput::make('allowance')
+                        //     ->label('Toleransi Waktu Absensi')
+                        //     ->minLength(0)
+                        //     ->default(15)
+                        //     ->suffix('Menit')
+                        //     ->maxLength(99999)
+                        //     ->required(),
 
                         TextInput::make('radius')
                             ->label('Radius Lokasi Absensi')
@@ -105,23 +105,22 @@ class AttendanceLocationResource extends Resource
                             ->maxLength(99999)
                             ->required(),
 
-                        TimePicker::make('time_in')
-                            ->label('Waktu Masuk')
-                            ->format('H:i:s')
-                            ->timezone('Asia/Makassar')
-                            ->required(),
+                        // TimePicker::make('time_in')
+                        //     ->label('Waktu Masuk')
+                        //     ->format('H:i:s')
+                        //     ->timezone('Asia/Makassar')
+                        //     ->required(),
 
 
-                        TimePicker::make('time_out')
-                            ->label('Waktu Keluar')
-                            ->format('H:i:s')
-                            ->timezone('Asia/Makassar')
-                            ->required(),
+                        // TimePicker::make('time_out')
+                        //     ->label('Waktu Keluar')
+                        //     ->format('H:i:s')
+                        //     ->timezone('Asia/Makassar')
+                        //     ->required(),
 
 
                         Select::make('color')
                             ->label('Warna Penanda')
-                            ->columnSpanFull()
                             ->options([
                                 'red' => 'Merah',
                                 'green' => 'Hijau',
@@ -140,11 +139,11 @@ class AttendanceLocationResource extends Resource
                 Fieldset::make('Peta Lokasi')
                     ->schema([
                         TextInput::make('latitude')
-                            ->label('Kordinat Lintang ( Latitude )')
+                            ->label('Koordinat Lintang ( Latitude )')
                             ->required(),
 
                         TextInput::make('longitude')
-                            ->label('Kordinat Bujut ( Longitude )')
+                            ->label('Koordinat Bujur ( Longitude )')
                             ->required(),
 
                         Map::make('location')

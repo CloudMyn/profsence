@@ -28,11 +28,6 @@ class PDFExporterController extends Controller
             now()->endOfMonth()->format('Y-m-d')
         ])->where('type', 'check_out')->count();
 
-        $violdation_count   =   $user->attendances()->whereBetween('created_at', [
-            now()->startOfMonth()->format('Y-m-d'),
-            now()->endOfMonth()->format('Y-m-d')
-        ])->where('check_violation', true)->count();
-
         $cuti_count         =   $user->attendances()->whereBetween('created_at', [
             now()->startOfMonth()->format('Y-m-d'),
             now()->endOfMonth()->format('Y-m-d')
@@ -55,7 +50,6 @@ class PDFExporterController extends Controller
         $laporan_absensi    =   [
             'Absen Masuk'       =>  $check_in_count . $x,
             'Absen Keluar'      =>  $check_out_count . $x,
-            'Pelanggaran Absen' =>  $violdation_count . $x,
             'Izin Cuti'         =>  $cuti_count . $h,
             'Izin Sakit'        =>  $sakit_count . $h,
             'Izin Dinas'        =>  $dinas_luar_count . $h,
@@ -64,7 +58,7 @@ class PDFExporterController extends Controller
         $violdations    =   $user->attendances()->whereBetween('created_at', [
                 now()->startOfMonth()->format('Y-m-d'),
                 now()->endOfMonth()->format('Y-m-d')
-            ])->where('check_violation', true)->get();
+            ])->get();
 
         $formated_table =   [];
 
@@ -72,7 +66,6 @@ class PDFExporterController extends Controller
         foreach ($violdations as $absence) {
             $formated_table[] =   [
                 $index,
-                $absence->violation_note,
                 $absence->note,
                 $absence->created_at->format('H:i'),
                 $absence->created_at->format('d/m/Y'),
@@ -88,8 +81,8 @@ class PDFExporterController extends Controller
                 'Laporan Absensi Periode ' . date('F Y')   =>  $laporan_absensi
             ],
             'tables'    =>  [
-                'List Pelanggaran Bulan ini'    =>  [
-                    "kolom"     =>  ['No', 'Pelanggaran', 'Keterangan', 'Jam', 'Tanggal'],
+                'List Absensi Bulan ini'    =>  [
+                    "kolom"     =>  ['No', 'Keterangan', 'Jam', 'Tanggal'],
                     "data"      =>  $formated_table,
                 ]
             ]

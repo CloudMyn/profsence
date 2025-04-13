@@ -43,7 +43,7 @@ class UserResource extends Resource
             ->schema([
 
                 TextInput::make('name')
-                    ->label('Nama Lenkap')
+                    ->label('Nama Lengkap')
                     ->required()
                     ->minLength(3)
                     ->maxLength(199),
@@ -66,7 +66,7 @@ class UserResource extends Resource
                 Fieldset::make('Privasi')->schema([
 
                     TextInput::make('password')
-                        ->label('Katasandi')
+                        ->label('Kata Sandi')
                         ->required(function ($record) {
                             return !$record;
                         })

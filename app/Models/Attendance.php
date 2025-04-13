@@ -10,9 +10,7 @@ class Attendance extends Model
 {
     use HasFactory;
 
-    protected $casts = [
-        'check_violation'   =>  'boolean'
-    ];
+    protected $casts = [];
 
     protected $guarded = [];
 
@@ -22,8 +20,7 @@ class Attendance extends Model
 
         static::creating(function ($model) {
             $model->beforeCreate();
-
-            $model->checkViolation();
+            // $model->checkViolation();
         });
     }
 

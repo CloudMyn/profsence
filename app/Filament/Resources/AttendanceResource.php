@@ -157,14 +157,14 @@ class AttendanceResource extends Resource
                 ->disabled()
                 ->hiddenOn('create'),
 
-            TextInput::make('violation_note')
-                ->label('Pelanggaran Absensi')
-                ->columnSpanFull()
-                ->afterStateHydrated(function ($record) {
-                    return "aa";
-                })
-                ->disabled()
-                ->hiddenOn('create'),
+            // TextInput::make('violation_note')
+            //     ->label('Pelanggaran Absensi')
+            //     ->columnSpanFull()
+            //     ->afterStateHydrated(function ($record) {
+            //         return "aa";
+            //     })
+            //     ->disabled()
+            //     ->hiddenOn('create'),
 
             MapInput::make('input_map')
                 ->label('Lokasi Saya')
@@ -233,17 +233,17 @@ class AttendanceResource extends Resource
                     })
                     ->searchable(),
 
-                TextColumn::make('check_violation')
-                    ->label("Pelanggaran Absensi")
-                    ->state(function ($record) {
-                        return $record->check_violation === true ? 'Terdapat Pelanggaran' : 'Tidak Ada Pelanggaran';
-                    })
-                    ->sortable()
-                    ->badge()
-                    ->color(fn(string $state): string => match ($state) {
-                        'Tidak Ada Pelanggaran' => 'success',
-                        'Terdapat Pelanggaran'  => 'danger',
-                    }),
+                // TextColumn::make('check_violation')
+                //     ->label("Pelanggaran Absensi")
+                //     ->state(function ($record) {
+                //         return $record->check_violation === true ? 'Terdapat Pelanggaran' : 'Tidak Ada Pelanggaran';
+                //     })
+                //     ->sortable()
+                //     ->badge()
+                //     ->color(fn(string $state): string => match ($state) {
+                //         'Tidak Ada Pelanggaran' => 'success',
+                //         'Terdapat Pelanggaran'  => 'danger',
+                //     }),
 
                 TextColumn::make('time')
                     ->label('Jam Input')
